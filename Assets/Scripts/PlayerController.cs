@@ -3,14 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
     CharacterController character;
     Vector3 moveVec;
     public float speed = 15f;
-    private int score;
-    public int health;
+    int score;
+    int health;
+    public Text scoreText;
+    public Text healthText;
+    public Text winloseText;
+    public Image winloseImg;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -29,8 +35,13 @@ public class PlayerController : MonoBehaviour
     {
         if (health == 0)
         {
-            Debug.Log("Game Over!");
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            // Debug.Log("Game Over!");
+            SetLoseText();
+            StartCoroutine(LoadScene(3));
+        }
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            SceneManager.LoadScene("menu");
         }
     }
 
@@ -47,16 +58,50 @@ public class PlayerController : MonoBehaviour
             // disable game object
             other.gameObject.SetActive(false);
             score += 1;
-            Debug.Log($"Score: {score}");
+            SetScoreText();
+            // Debug.Log($"Score: {score}");
         }
         if (other.gameObject.CompareTag("Trap"))
         {
             health -= 1;
-            Debug.Log($"Health: {health}");
+            SetHealthText();
+            // Debug.Log($"Health: {health}");
         }
         if (other.gameObject.CompareTag("Goal"))
         {
-            Debug.Log("You win!");
+            SetWinText();
         }
+    }
+
+    void SetScoreText()
+    {
+        scoreText.text = "Score: " + score.ToString();
+    }
+
+    void SetHealthText()
+    {
+        healthText.text = "Health: " + health.ToString();
+    }
+
+    void SetWinText()
+    {
+        winloseImg.gameObject.SetActive(true);
+        winloseImg.color = Color.green;
+        winloseText.color = Color.black;
+        winloseText.text = "You Win!";
+    }
+
+    void SetLoseText()
+    {
+        winloseImg.gameObject.SetActive(true);
+        winloseImg.color = Color.red;
+        winloseText.color = Color.white;
+        winloseText.text = "Game Over!";
+    }
+
+    IEnumerator LoadScene(float seconds)
+    {
+        yield return new WaitForSeconds(3f);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
