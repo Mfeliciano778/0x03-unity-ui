@@ -70,6 +70,7 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.CompareTag("Goal"))
         {
             SetWinText();
+            StartCoroutine(LoadScene(3));
         }
     }
 
